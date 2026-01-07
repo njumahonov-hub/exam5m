@@ -5,6 +5,7 @@ const cookieParser = require("cookie-parser")
 const authRoutes = require("./routes/auth.routes")
 const errorMiddleware = require("./middleware/error.middleware")
 const categoryroutes = require("./routes/category.routes")
+const carRoutes = require("./routes/car.routes")
 require("dotenv").config()
 
 
@@ -19,6 +20,7 @@ connectDB()
 app.use("/images", express.static("upload/images"))
 app.use(authRoutes)
 app.use(categoryroutes)
+app.use(carRoutes)
 
 app.use(errorMiddleware)
 PORT = process.env.PORT || 3000

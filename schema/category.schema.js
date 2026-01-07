@@ -7,15 +7,18 @@ const category = new Schema(
       type: String,
       required: true,
       set: (value) => value.trim(),
-      unique: [true, "Bunaday username avval kiritilgan"],
+      unique: [true, "Bunday brand avval kiritilgan"],
       match: [/^[a-zA-Z0-9_]+$/, "faqat harf kiriting"],
     },
     image_url: {
       type: String,
       required: true,
-      
     },
-
+    admin_id: {
+      type: Schema.ObjectId,
+      ref: "Auth"
+    }
+   
   },
   {
     versionKey: false,

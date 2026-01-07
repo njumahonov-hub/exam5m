@@ -1,3 +1,4 @@
+const CarSchema = require("../schema/car.schema");
 const categorySchema = require("../schema/category.schema");
 const CustomErrorHandle = require("../utils/custom-errorhandle");
 const fs = require("fs");
@@ -21,12 +22,13 @@ const addCategory = async (req, res, next) => {
     }
 
     const image_url = `http://localhost:4001/images/${req.file.filename}`;
+    const admin_id = req.user.id
 
-    await categorySchema.create({ title, image_url });
+    await categorySchema.create({ title, image_url, admin_id });
 
     res.status(201).json({
       message: "Added category",
-      category: { title, image_url },
+      category: { title, image_url, admin_id },
     });
   } catch (error) {
     next(error);
@@ -41,7 +43,10 @@ const getoneCategory = async (req, res, next) => {
       throw CustomErrorHandle.NotFound("category not found!");
     }
 
-    res.status(200).json({ category });
+
+     const foundedcar = await CarSchema.find({brand:id })
+
+    res.status(200).json({ category, foundedcar });
   } catch (error) {
     next(error);
   }
@@ -95,7 +100,7 @@ const deleteCategory = async (req, res, next) => {
 
     const category = await categorySchema.findById(id);
 
-    if (!book) {
+    if (!category) {
       throw CustomErrorHandle.NotFound("category not found!");
     }
 
