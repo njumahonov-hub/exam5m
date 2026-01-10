@@ -10,6 +10,7 @@ const {
 } = require("../controller/car.controller");
 const authorization = require("../middleware/authorization");
 const car_validatorMiddleware = require("../middleware/car_validator.middleware");
+const auhtorization2 = require("../middleware/auhtorization2");
 
 const carRoutes = Router();
 
@@ -24,8 +25,8 @@ carRoutes.post(
   ]),
   addcar
 );
-carRoutes.get("/get_all_cars", getallCar);
-carRoutes.get("/get_one_car/:id", getoneCar);
+carRoutes.get("/get_all_cars", auhtorization2, getallCar);
+carRoutes.get("/get_one_car/:id",auhtorization2, getoneCar);
 carRoutes.put(
   "/update_car/:id",
   authorization,
@@ -36,6 +37,6 @@ carRoutes.put(
   ]),
   updateCar
 );
-carRoutes.delete("/delete_car/:id", deleteCar);
+carRoutes.delete("/delete_car/:id", authorization, deleteCar);
 
 module.exports = carRoutes;

@@ -1,0 +1,39 @@
+const SavedSchema = require("../schema/saved.schema")
+
+
+
+
+const Saved = async (req, res, next) => {
+    try {
+        const user_id = req.user.id    
+        const car_id = req.params.id   
+
+        const saved = await SavedSchema.findOne({ user_id, car_id })
+
+        if (saved) {
+            await SavedSchema.findByIdAndDelete(saved._id)
+
+            return res.status(200).json({
+                message: "saved off",
+                saved: false
+            })
+        }
+
+        await SavedSchema.create({
+            user_id,
+            car_id,
+            saved: true
+        })
+
+        res.status(201).json({
+          message:"saved",
+            saved: true
+        })
+
+    } catch (error) {
+      next(error)
+}
+}
+module.exports = {
+    Saved
+}

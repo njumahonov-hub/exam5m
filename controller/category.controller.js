@@ -7,6 +7,7 @@ const path = require("path");
 const getallCategory = async (req, res, next) => {
   try {
     const category = await categorySchema.find();
+
     res.status(200).json(category);
   } catch (error) {
     next(error);
@@ -22,7 +23,7 @@ const addCategory = async (req, res, next) => {
     }
 
     const image_url = `http://localhost:4001/images/${req.file.filename}`;
-    const admin_id = req.user.id
+    const admin_id = req.user.id;
 
     await categorySchema.create({ title, image_url, admin_id });
 
@@ -43,8 +44,7 @@ const getoneCategory = async (req, res, next) => {
       throw CustomErrorHandle.NotFound("category not found!");
     }
 
-
-     const foundedcar = await CarSchema.find({brand:id })
+    const foundedcar = await CarSchema.find({ brand: id });
 
     res.status(200).json({ category, foundedcar });
   } catch (error) {
@@ -60,6 +60,7 @@ const updateCategory = async (req, res, next) => {
     if (!category) {
       throw CustomErrorHandle.NotFound("category not found!");
     }
+
     const updateData = { title: title || category.title };
 
     if (req.file) {
@@ -74,8 +75,13 @@ const updateCategory = async (req, res, next) => {
         }
       }
 
-      updateData.image_url = `http://localhost:4001/images/${req.file.filename}`
+      updateData.image_url = `http://localhost:4001/images/${req.file.filename}`;
     }
+
+    if (admin_id !== req.user.id) {
+      throw CustomErrorHandle.Forbidden("You cannot update someone else's car");
+    }
+
     const updatedCategory = await categorySchema.findByIdAndUpdate(
       id,
       updateData,
@@ -89,7 +95,6 @@ const updateCategory = async (req, res, next) => {
         image_url: `http://localhost:4001/images/${updatedCategory.image_url}`,
       },
     });
-
   } catch (error) {
     next(error);
   }
@@ -103,6 +108,10 @@ const deleteCategory = async (req, res, next) => {
     if (!category) {
       throw CustomErrorHandle.NotFound("category not found!");
     }
+    
+     if (admin_id!== req.user.id) {
+      throw CustomErrorHandle.Forbidden("You cannot delete someone else's car" )
+       }
 
     await categorySchema.findByIdAndDelete(id);
 

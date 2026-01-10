@@ -1,5 +1,6 @@
 const CarSchema = require("../schema/car.schema");
 const categorySchema = require("../schema/category.schema");
+const SavedSchema = require("../schema/saved.schema");
 const CustomErrorHandle = require("../utils/custom-errorhandle");
 
 const addcar = async (req, res, next) => {
@@ -15,12 +16,15 @@ const addcar = async (req, res, next) => {
       price,
       tanirofka,
       description,
+      
     } = req.body;
+
+    
 
       const category = await categorySchema.findOne({ title: brand });
     if (!category) {
         
-      throw CustomErrorHandle.NotFound( "Brand topilmadi" );
+      throw CustomErrorHandle.NotFound( "Brand not found" );
     }
     
   
@@ -48,6 +52,8 @@ const addcar = async (req, res, next) => {
       tanirofka: tanirofka || false,
       description: description || "",
       images,
+      admin_id: req.user.id
+
     });
 
     res.status(201).json({
@@ -71,16 +77,30 @@ const getallCar = async (req, res, next) => {
 
 const getoneCar = async (req, res, next) => {
   try {
-      const {id} = req.params
-      const foundedcar = await CarSchema.findById(id)
+    const { id } = req.params
+    const user_id = req.user.id
 
-      if(!foundedcar){
-        throw CustomErrorHandle.NotFound("Car not found")
-      }
+    const foundedcar = await CarSchema.findById(id)
+    if (!foundedcar) {
+      throw CustomErrorHandle.NotFound("Car not found")
+    }
 
-      res.status(200).json(foundedcar)
+    let saved = false
+    if (user_id) {
+      const isSaved = await SavedSchema.findOne({ car_id: id, user_id })
+      saved = !!isSaved
+    }
 
-  } catch (error){
+    
+    const savedCount = await SavedSchema.countDocuments({ car_id: id })
+
+    res.status(200).json({
+      car: foundedcar,
+      saved,
+      savedCount
+    })
+
+  } catch (error) {
     next(error)
   }
 }
@@ -100,12 +120,16 @@ const updateCar = async (req, res, next) => {
       price,
       tanirofka,
       description,
+      admin_id
     } = req.body;
 
     const car = await CarSchema.findById(id);
     if (!car) {
       throw CustomErrorHandle.NotFound("Car not found!");
     }
+    if (admin_id!== req.user.id) {
+      throw CustomErrorHandle.Forbidden("You cannot update someone else's car" )
+       }
 
   
     let categoryId = car.brand;
@@ -169,6 +193,10 @@ const deleteCar = async (req, res, next) => {
     if (!Car) {
       throw CustomErrorHandle.NotFound("Car not found!");
     }
+     
+     if (admin_id!== req.user.id) {
+      throw CustomErrorHandle.Forbidden("You cannot delete someone else's car" )
+       }
 
     await CarSchema.findByIdAndDelete(id);
 

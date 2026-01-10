@@ -48,7 +48,24 @@ const Auth = new Schema(
     otpTime: {
       type: Number,
       default: null
-    }
+    },
+       first_name: {
+      type: String,
+      default: null,
+    },
+    last_name: {
+      type: String,
+      default: null,
+    },
+    phone_number: {
+      type: String,
+      validate: {
+        validator: function (value) {
+          return /^\+998\d{2} d{3} d{2} d{2}/;
+        },
+        message: "telefon raqam formati +99890 000 00 00 bunday bo'lishi kerak",
+      },
+    },
     
   },
   {

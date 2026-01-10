@@ -3,6 +3,11 @@ const { Schema, model } = require("mongoose");
 
 const carsSchema = new Schema(
   {
+    admin_id: {
+      type: Schema.ObjectId,
+      ref:"Auth",
+      required: true
+    },
     brand: {
       type: Schema.ObjectId,
       ref: "category",
