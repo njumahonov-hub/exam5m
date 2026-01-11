@@ -127,7 +127,7 @@ const updateCar = async (req, res, next) => {
     if (!car) {
       throw CustomErrorHandle.NotFound("Car not found!");
     }
-    if (admin_id!== req.user.id) {
+    if (car.admin_id!== req.user.id) {
       throw CustomErrorHandle.Forbidden("You cannot update someone else's car" )
        }
 
@@ -194,7 +194,7 @@ const deleteCar = async (req, res, next) => {
       throw CustomErrorHandle.NotFound("Car not found!");
     }
      
-     if (admin_id!== req.user.id) {
+     if (Car.admin_id!== req.user.id) {
       throw CustomErrorHandle.Forbidden("You cannot delete someone else's car" )
        }
 

@@ -78,7 +78,7 @@ const updateCategory = async (req, res, next) => {
       updateData.image_url = `http://localhost:4001/images/${req.file.filename}`;
     }
 
-    if (admin_id !== req.user.id) {
+    if (category.admin_id !== req.user.id) {
       throw CustomErrorHandle.Forbidden("You cannot update someone else's car");
     }
 
@@ -109,7 +109,7 @@ const deleteCategory = async (req, res, next) => {
       throw CustomErrorHandle.NotFound("category not found!");
     }
     
-     if (admin_id!== req.user.id) {
+     if (category.admin_id!== req.user.id) {
       throw CustomErrorHandle.Forbidden("You cannot delete someone else's car" )
        }
 
