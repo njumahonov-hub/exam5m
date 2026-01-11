@@ -78,9 +78,7 @@ const updateCategory = async (req, res, next) => {
       updateData.image_url = `http://localhost:4001/images/${req.file.filename}`;
     }
 
-    if (category.admin_id !== req.user.id) {
-      throw CustomErrorHandle.Forbidden("You cannot update someone else's car");
-    }
+ 
 
     const updatedCategory = await categorySchema.findByIdAndUpdate(
       id,
@@ -109,9 +107,6 @@ const deleteCategory = async (req, res, next) => {
       throw CustomErrorHandle.NotFound("category not found!");
     }
     
-     if (category.admin_id!== req.user.id) {
-      throw CustomErrorHandle.Forbidden("You cannot delete someone else's car" )
-       }
 
     await categorySchema.findByIdAndDelete(id);
 
